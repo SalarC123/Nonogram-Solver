@@ -1,58 +1,97 @@
 import pprint
+import random
+import copy
 
-_ = 0
+_ = 0                     #TODO #FIXME use something else
 
-board = [
-    [_,_,_,1,0,1],
-    [_,_,_,0,1,0],
-    [_,_,_,1,0,1],
-    [1,0,1,0,0,0],
-    [0,1,0,0,0,0],
-    [1,0,1,0,0,0]
+board = [                       #TODO FIXME 9x9
+    [_,_,_,0,0,0],
+    [_,_,_,0,0,0],
+    [_,_,_,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0]
 ]
 
-playboard = [
-    board[3][3:],
-    board[4][3:],
-    board[5][3:]
-]
+# creates a board with only the area where you enter answers
+playboard = [[board[row][col] for row in range(len(board)) if row >= len(board)//2] for col in range(len(board)) if col >= len(board)//2]
 
-def answer_key_board():
 
-    c1_counts = [board[0][3],board[1][3], board[2][3]]
-    c2_counts = [board[0][4],board[1][4], board[2][4]]
-    c3_counts = [board[0][5],board[1][5], board[2][5]]
-    r1_counts = board[3][:3]
-    r2_counts = board[4][:3]
-    r3_counts = board[5][:3]    
 
-    for count, i in enumerate(c1_counts):
-        if i:
-            playboard[count][0] = '.'
+def generate_answer_board():
+    '''
+    
+    '''
+    newplayboard = copy.deepcopy(playboard)
 
-    for count, i in enumerate(c2_counts):
-        if i:
-            playboard[count][1] = '.'
+    for row in range(len(newplayboard)):
+        for col in range(len(newplayboard)):
+            if random.choice([True,False]):
+                newplayboard[row][col] = '.'        # TODO FIXME Use something else
+    
+    return newplayboard
 
-    for count, i in enumerate(c3_counts):
-        if i:
-            playboard[count][2] = '.'
 
-    return playboard
 
-your_board = playboard
-answer_board = answer_key_board() 
+def generate_answer_counts_with_board(answer_board):
+    '''
+    
+    '''
+    boardcopy = copy.deepcopy(board)
 
-print(your_board)
-print(answer_board)
+    # ROW counts
+    for row in range(len(answer_board)):
+        in_a_row = 0
+        for count, col in enumerate(answer_board[row]):
+            if col:
+                in_a_row += 1
+                # if you reach the end of the row
+                if count ==  len(answer_board) - 1:
+                    boardcopy[len(answer_board)+row][count] = in_a_row
+            else:
+                boardcopy[len(answer_board)+row][count] = in_a_row
+                in_a_row = 0
+            
 
-# while your_board != answer_board:
-#     rowguess = int(input('which row has a black box: '))
-#     columnguess = int(input('which column has a black box'))
-#     if answer_board[rowguess][columnguess] == '.':
-#         your_board[rowguess][columnguess] = '.' 
-#         print('CORRECT')
-#         print(your_board)
-#     else:
-#         print("WRONG")
-#         print(your_board)
+    #COLUMN counts
+    for row in range(len(answer_board)):
+        in_a_row = 0
+        for count, j in enumerate(answer_board):
+            if j[row]:
+                in_a_row += 1
+                # if you reach the end of the column
+                if count == len(answer_board) - 1:
+                    boardcopy[count][len(answer_board) + row] = in_a_row
+            else:
+                boardcopy[count][len(answer_board) + row] = in_a_row
+                in_a_row = 0
+        
+    return boardcopy
+
+
+
+def play():
+    '''
+    
+    '''
+    answer_board = generate_answer_board() 
+    your_board = generate_answer_counts_with_board(answer_board)
+    
+    while your_board != answer_board:
+        rowguess = int(input('which row has a black box: '))
+        columnguess = int(input('which column has a black box: '))
+        if answer_board[rowguess][columnguess] == '.':                # TODO FIXME Use something else
+            your_board[rowguess][columnguess] = '.'                   # TODO FIXME Use something else
+            print('CORRECT')
+            print(your_board)
+        else:
+            print("WRONG")
+            print(your_board)
+    print('FINISHED')
+
+
+
+
+# ans = generate_answer_board()
+# pprint.pprint(ans, width = 25)
+# pprint.pprint(generate_answer_counts(ans))
