@@ -5,25 +5,15 @@ import copy
 _ = 0        
 filler = 'X'
 
-board = [                                                           
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],  
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+board = [
+    [_,_,_,_,0,0,0,0],
+    [_,_,_,_,0,0,0,0],
+    [_,_,_,_,0,0,0,0],
+    [_,_,_,_,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0]
 ]
 
 # creates a board with only the area where you enter answers
@@ -46,7 +36,7 @@ def generate_answer_board():
     return newplayboard
 
 
-def generate_answer_counts_with_board(answer_board):                #TODO FIXME fix naming
+def generate_answer_counts_with_board(answer_board):
     '''
     Creates "counts" based on the answer key board
     and returns an entire board with an empty play area. 
@@ -84,6 +74,42 @@ def generate_answer_counts_with_board(answer_board):                #TODO FIXME 
     return boardcopy
 
 
+def row_counts(board, row):
+    '''
+    returns a list of the numbers 
+    that describe the row provided
+    '''
+    playboard_length = len(board) // 2
+    return board[playboard_length + row][:playboard_length]
+
+
+def column_counts(board, column):
+    '''
+    returns a list of the numbers 
+    that describe the column provided
+    '''
+    playboard_length = len(board) // 2
+    return [board[i][playboard_length + column] for i in range(playboard_length)]
+
+
+def row_boxes(board, row):
+    '''
+    returns a list of the values in the 
+    other boxes in the row provided
+    '''
+    playboard_length = len(board) // 2
+    return board[playboard_length + row][playboard_length:]
+
+
+def column_boxes(board, column):
+    '''
+    returns a list of the values in the 
+    other boxes in the column provided
+    '''
+    playboard_length = len(board) // 2
+    return [board[i + playboard_length][playboard_length + column] for i in range(playboard_length)]
+
+
 def play():
     '''
     Generates random board for testing in the terminal
@@ -102,7 +128,29 @@ def play():
             print('CORRECT')
         else:
             print("WRONG")
-    print('FINISHED')
+    print('YOU WON')
 
 if __name__ == '__main__':
     play()
+
+
+#[                                                           
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [_,_,_,_,_,_,_,_,_,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],  
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+# ]
