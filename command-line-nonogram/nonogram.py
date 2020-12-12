@@ -17,11 +17,16 @@ board = [
 ]
 
 # creates a board with only the area where you enter answers
-playboard = [[board[row][col] for row in range(len(board)) if row >= len(board)//2] for col in range(len(board)) if col >= len(board)//2]
+playboard = [
+    [board[row][col] for row in range(len(board)) 
+        if row >= len(board)//2] 
+            for col in range(len(board)) 
+                if col >= len(board)//2
+]
 
 
 
-def generate_answer_board():                                
+def generate_answer_board(playboard):                                
     '''
     Generates random board and returns the 
     "play" area with the answers filled in
@@ -36,7 +41,7 @@ def generate_answer_board():
     return newplayboard
 
 
-def generate_answer_counts_with_board(answer_board):
+def generate_answer_counts_with_board(board, answer_board):
     '''
     Creates "counts" based on the answer key board
     and returns an entire board with an empty play area. 
@@ -80,7 +85,7 @@ def row_counts(board, row):
     that describe the row provided
     '''
     playboard_length = len(board) // 2
-    return board[playboard_length + row][:playboard_length]
+    return [board[playboard_length + row][i] for i in range(playboard_length) if board[playboard_length + row][i]]
 
 
 def column_counts(board, column):
@@ -89,33 +94,32 @@ def column_counts(board, column):
     that describe the column provided
     '''
     playboard_length = len(board) // 2
-    return [board[i][playboard_length + column] for i in range(playboard_length)]
+    return [board[i][playboard_length + column] for i in range(playboard_length) if board[i][playboard_length + column]]
 
 
-def row_boxes(board, row):
+def row_boxes(playboard, row):
     '''
     returns a list of the values in the 
     other boxes in the row provided
     '''
-    playboard_length = len(board) // 2
-    return board[playboard_length + row][playboard_length:]
+    return playboard[row]
 
 
-def column_boxes(board, column):
+def column_boxes(playboard, column):
     '''
     returns a list of the values in the 
     other boxes in the column provided
     '''
-    playboard_length = len(board) // 2
-    return [board[i + playboard_length][playboard_length + column] for i in range(playboard_length)]
+    playboard_length = len(playboard)
+    return [playboard[i][column] for i in range(playboard_length)]
 
 
 def play():
     '''
     Generates random board for testing in the terminal
     '''
-    answer_board = generate_answer_board() 
-    your_board = generate_answer_counts_with_board(answer_board)
+    answer_board = generate_answer_board(playboard) 
+    your_board = generate_answer_counts_with_board(board, answer_board)
     your_board_play_area = [[your_board[row][col] for row in range(len(your_board)) if row >= len(your_board)//2] for col in range(len(your_board)) if col >= len(your_board)//2]
     
     while your_board_play_area != answer_board:
@@ -130,8 +134,8 @@ def play():
             print("WRONG")
     print('YOU WON')
 
-if __name__ == '__main__':
-    play()
+# if __name__ == '__main__':
+#     play()
 
 
 #[                                                           
