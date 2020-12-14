@@ -1,8 +1,7 @@
-'''https://www.youtube.com/watch?v=yniQ15A7MLk'''          #TODO
-
 import pygame
 import copy
 import random
+import time
 import pprint
 from command_line_nonogram.nonogram import generate_answer_counts_with_board, generate_answer_board
 from command_line_nonogram.nonogram import board, playboard, filler
@@ -17,6 +16,8 @@ def game():
 
     black = (0,0,0)
     white = (255,255,255)
+    custom_box_color = (123,123,200)
+    custom_cross_color = (50,150,215)
 
     width, height = (1000,1000)
     board_width, board_height = (830, 660)
@@ -35,9 +36,10 @@ def game():
     background_surface = pygame.image.load('images/sudokuboard.jpg').convert()
     background_surface = pygame.transform.scale(background_surface, (board_width,board_height))
     title_font = pygame.font.SysFont('Corbel',int(width / 5))
-    text = title_font.render('NONOGRAM',True, black)
     num_font = pygame.font.SysFont('Arial', 30)
     cross_font = pygame.font.SysFont('Arial', 100)
+    title_text = title_font.render('NONOGRAM',True, black)
+    instructions_text = num_font.render('Right click to place an "X"          Press SPACE to reveal the answer', True, black)
 
     answer_board = generate_answer_board(playboard)
     empty_with_answer_counts = generate_answer_counts_with_board(board, answer_board)
@@ -46,12 +48,12 @@ def game():
     def draw_square(dimensions, color):
         pygame.draw.rect(background_surface, color, dimensions)
 
-    def draw_cross(dimensions, boxlength, boxheight):
+    def draw_cross(dimensions, boxlength, color):
         x = dimensions[0]
         y = dimensions[1]
         draw_square(dimensions, white)
 
-        cross = cross_font.render('X', True, black)
+        cross = cross_font.render('X', True, color)
         # added int(boxlength)//6 to center the cross
         background_surface.blit(cross, (x + int(boxlength//6),y))
 
@@ -59,19 +61,32 @@ def game():
         '''
 
         '''
-        if currentcolor == black:
+        if currentcolor == custom_box_color:
             playboard[clicked_column][clicked_row] = filler
         else:
             playboard[clicked_column][clicked_row] = 0
 
-    def reveal_answer():
-        pass
+    def solve(answer_board, boxlength, boxheight):
+        '''
+        If you press space, the board 
+        will be filled in automatically
+        '''
+        pygame.event.set_blocked([pygame.MOUSEBUTTONDOWN, pygame.K_SPACE])
+        for first_count, row in enumerate(answer_board):
+            for second_count, col in enumerate(row):
+                x = boxlength * second_count + 5
+                y = boxheight * first_count + 5
+                box_dimensions = (x, y, boxlength - 5, boxheight - 5)
+                if col:
+                    draw_square(box_dimensions, custom_box_color)
+                else:
+                    draw_cross(box_dimensions, boxlength, custom_cross_color)
         
-    pprint.pprint(answer_board)
     while True:
         # blit parameters: surface that should be put on screen, where to put it
         screen.blit(background_surface, (board_start_x, board_start_y))
-        screen.blit(text, (int(width/15),int(height/25)))
+        screen.blit(title_text, (int(width/15),int(height/25)))
+        screen.blit(instructions_text, (int(width/15), int(height/6)))
 
         # placing row counts 
         for i in range(len(playboard)):
@@ -90,6 +105,10 @@ def game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    solve(answer_board, board_width//9, board_height//9)
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouseX, mouseY = event.pos
@@ -111,20 +130,21 @@ def game():
                 # adds black square on white box and vice versa
                 if event.button == left:
                     if screen.get_at(event.pos) == white:
-                        draw_square(clicked_box_dimensions, black)
-                        change_model_board(playboard, clicked_row, clicked_column, black)
+                        draw_square(clicked_box_dimensions, custom_box_color)
+                        change_model_board(playboard, clicked_row, clicked_column, custom_box_color)
                     else:
                         draw_square(clicked_box_dimensions, white)
                         change_model_board(playboard, clicked_row, clicked_column, white)
                 elif event.button == right:
-                    draw_cross(clicked_box_dimensions, box_length, box_height)
+                    draw_cross(clicked_box_dimensions, box_length, custom_cross_color)
                     change_model_board(playboard, clicked_row, clicked_column, white)
 
             if playboard == answer_board:
-                print('you win!!!')
-                
+                wintext = title_font.render('YOU WIN!!!', True, (70,100,255))
+                background_surface.blit(wintext, (10,10))
+                pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
 
-        clock.tick(30)
+        clock.tick(20)
         pygame.display.update()
 
 if __name__ == '__main__':
