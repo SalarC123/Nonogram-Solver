@@ -9,7 +9,12 @@ from command_line_nonogram.nonogram import row_counts, column_counts
 
 def game():
     '''
-    DESCRIPTION OF GAME 
+    Python version of nonogram which automatically 
+    generates board and lets user place boxes, X's, 
+    and reveal the answer if they get stuck
+    The instructions are on this website: 
+    https://delightfulpaths.com/how-to-solve-nonogram-puzzles
+
     '''
     # Initializations of variables used within the mainloop
     pygame.init()
